@@ -1,0 +1,38 @@
+run:
+  timeout: 3m
+  tests: true
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - gosimple
+    - errcheck
+    - gocyclo
+    - unused
+    - gofmt
+    - revive
+
+linters-settings:
+  gocyclo:
+    min-complexity: 15
+
+  gofmt:
+    simplify: true
+
+  revive:
+    severity: warning
+    rules:
+      - name: indent-error-flow
+      - name: var-naming
+      - name: unused-parameter
+      - name: exported
+      - name: blank-imports
+      - name: indent-error-flow
+      - name: line-length-limit
+        arguments: [140]
+
+issues:
+  exclude-use-default: false
+  max-issues-per-linter: 0
+  max-same-issues: 0

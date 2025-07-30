@@ -1,0 +1,145 @@
+basePath: /
+definitions:
+  domain.Task:
+    properties:
+      description:
+        type: string
+      id:
+        type: string
+      title:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Task Manager
+  title: Task API
+  version: "1.0"
+paths:
+  /tasks:
+    get:
+      description: Retrive all tasks avaliable in the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tasks in database
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all tasks
+      tags:
+      - tasks
+    post:
+      consumes:
+      - application/json
+      description: Create a task by accepting title and description from user
+      parameters:
+      - description: Task to be created
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Task'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created task
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a task
+      tags:
+      - tasks
+    put:
+      consumes:
+      - application/json
+      description: Update contents of a task whether the title or the description
+        using the id
+      parameters:
+      - description: Task to update
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tasks updated
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update task by ID
+      tags:
+      - tasks
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a task for a database using the id
+      parameters:
+      - description: Task to delete
+        in: body
+        name: task
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Task'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete task by ID
+      tags:
+      - tasks
+    get:
+      consumes:
+      - application/json
+      description: Retrive a task from the databse by accepting an id
+      parameters:
+      - description: Task ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Tasks in database by ID
+          schema:
+            $ref: '#/definitions/domain.Task'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get task by id
+      tags:
+      - tasks
+swagger: "2.0"
