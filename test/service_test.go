@@ -38,10 +38,68 @@ func (m *MockDatabase) Delete(id string) error {
 func TestServiceCreateTask(t *testing.T) {
 	mock := new(MockDatabase)
 	service := service.NewConnect(mock)
-	task := domain.Task{Title: "test1", Description: "testing123"}
+	task := domain.Task{
+		Title: "test1", Description: "testing123",
+	}
 	mock.On("CreateTask", task).Return("1", nil)
 
 	id, err := service.CreateTask(task)
 	assert.NoError(t, err)
 	assert.Equal(t, "1", id)
-} 
+}
+
+func TestServiceGetAllTask(t *testing.T) {
+	mock := new(MockDatabase)
+	service := service.NewConnect(mock)
+	
+	task := []domain.Task {
+		{ID: "1", Title: "test1", Description: "testing123"},
+		{ID: "2", Title: "test2", Description: "testing456"}, 
+	}
+
+	mock.On("GetAll").Return(task,nil)
+	tasks,err := service.GetAll()
+
+	assert.Equal(t, tasks,task)
+	assert.NoError(t, err)
+}
+
+func TestServiceGetByID(t *testing.T) {
+	mock := new(MockDatabase)
+	service := service.NewConnect(mock)
+
+	task := []domain.Task {
+		{ID: "1", Title: "test1", Description: "testing123"},
+		{ID: "2", Title: "test2", Description: "testing456"}, 
+	}
+
+	mock.On("GetByID", "1").Return(task[0],nil)
+	test, err := service.GetByID("1")
+	
+	assert.Equal(t, test, task[0])
+	assert.NoError(t, err)
+}
+
+func TestServiceUpdateTask(t *testing.T) {
+	mock := new(MockDatabase)
+	service := service.NewConnect(mock)
+
+	task := domain.Task{
+		ID: "1", Title: "test1", Description: "testing123",
+	}
+	mock.On("UpdateTask",task).Return(nil)
+	err := service.UpdateTask(task)
+
+	assert.NoError(t, err)
+}
+
+func TestServiceDelete(t *testing.T) {
+	mock := new(MockDatabase)
+	service := service.NewConnect(mock)
+
+	ID := "1"
+	mock.On("Delete",ID).Return(nil)
+	err := service.Delete(ID)
+
+	assert.NoError(t ,err)
+}
