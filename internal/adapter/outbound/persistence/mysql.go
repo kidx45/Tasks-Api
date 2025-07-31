@@ -6,7 +6,6 @@ import (
 	"os"
 	"task-api/internal/domain"
 	"task-api/internal/port/outbound"
-
 	"github.com/go-sql-driver/mysql"
 	"github.com/google/uuid"
 	"github.com/joho/godotenv"
@@ -25,8 +24,8 @@ func ConnectToMysql() *sql.DB {
 	cfg := mysql.NewConfig()
 	cfg.User = os.Getenv("DBUSER")
 	cfg.Passwd = os.Getenv("DBPASS")
-	cfg.Net = "tcp"
-	cfg.Addr = "127.0.0.1:3306"
+	cfg.Net = os.Getenv("DBNET")
+	cfg.Addr = os.Getenv("DBADR")
 	cfg.DBName = "taskdb"
 	db, err := sql.Open("mysql", cfg.FormatDSN())
 	if err != nil {
@@ -42,16 +41,16 @@ func ConnectToMysql() *sql.DB {
 
 // CallMysql : To set the value of db and make it a outbound interface
 func CallMysql(db *sql.DB) outbound.Database {
-	return &mysqlRepo{db: db}
+	return mysqlRepo{db: db}
 }
 
-func (r *mysqlRepo) CreateTask(task domain.Task) (string, error) {
+func (r mysqlRepo) CreateTask(task domain.Task) (string, error) {
 	id := uuid.New().String()
 	_, err := r.db.Exec("INSERT INTO tasks (id,title,description) VALUES (?,?,?)", id, task.Title, task.Description)
 	return id, err
 }
 
-func (r *mysqlRepo) GetByID(id string) (domain.Task, error) {
+func (r mysqlRepo) GetByID(id string) (domain.Task, error) {
 	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", id)
 
 	var task domain.Task
@@ -62,7 +61,7 @@ func (r *mysqlRepo) GetByID(id string) (domain.Task, error) {
 	return task, nil
 }
 
-func (r *mysqlRepo) GetAll() ([]domain.Task, error) {
+func (r mysqlRepo) GetAll() ([]domain.Task, error) {
 	rows, err := r.db.Query("SELECT id, title, description FROM tasks")
 	if err != nil {
 		return nil, err
@@ -80,7 +79,7 @@ func (r *mysqlRepo) GetAll() ([]domain.Task, error) {
 	return tasks, nil
 }
 
-func (r *mysqlRepo) UpdateTask(task domain.Task) error {
+func (r mysqlRepo) UpdateTask(task domain.Task) error {
 	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", task.ID)
 
 	var tasks domain.Task
@@ -92,7 +91,7 @@ func (r *mysqlRepo) UpdateTask(task domain.Task) error {
 	return errs
 }
 
-func (r *mysqlRepo) Delete(id string) error {
+func (r mysqlRepo) Delete(id string) error {
 	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", id)
 
 	var tasks domain.Task

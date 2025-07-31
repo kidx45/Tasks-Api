@@ -13,30 +13,30 @@ type Connect struct {
 
 // NewConnect : To form connection
 func NewConnect(repo outbound.Database) inbound.Connect {
-	return &Connect{repo: repo}
+	return Connect{repo: repo}
 }
 
 // CreateTask : To create a task
-func (s *Connect) CreateTask(task domain.Task) (string, error) {
+func (s Connect) CreateTask(task domain.Task) (string, error) {
 	return s.repo.CreateTask(task)
 }
 
 // GetByID : To retrive task by id
-func (s *Connect) GetByID(id string) (domain.Task, error) {
+func (s Connect) GetByID(id string) (domain.Task, error) {
 	return s.repo.GetByID(id)
 }
 
 // GetAll : TO retrive all tasks
-func (s *Connect) GetAll() ([]domain.Task, error) {
+func (s Connect) GetAll() ([]domain.Task, error) {
 	return s.repo.GetAll()
 }
 
 // UpdateTask : To update contents of a task by id
-func (s *Connect) UpdateTask(task domain.Task) error {
+func (s Connect) UpdateTask(task domain.Task) error {
 	return s.repo.UpdateTask(task)
 }
 
 // Delete : To delete task by id
-func (s *Connect) Delete(id string) error {
+func (s Connect) Delete(id string) error {
 	return s.repo.Delete(id)
 }

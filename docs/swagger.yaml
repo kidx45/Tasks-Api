@@ -97,11 +97,10 @@ paths:
       description: Delete a task for a database using the id
       parameters:
       - description: Task to delete
-        in: body
-        name: task
+        in: path
+        name: id
         required: true
-        schema:
-          $ref: '#/definitions/domain.Task'
+        type: string
       produces:
       - application/json
       responses:

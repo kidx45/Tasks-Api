@@ -180,13 +180,11 @@ const docTemplate = `{
                 "summary": "Delete task by ID",
                 "parameters": [
                     {
+                        "type": "string",
                         "description": "Task to delete",
-                        "name": "task",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/domain.Task"
-                        }
+                        "name": "id",
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {

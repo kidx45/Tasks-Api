@@ -30,13 +30,13 @@ import (
 )
 
 // Struct for connect to service in application
-type httpHandler struct {
-	service inbound.Connect
+type HttpHandler struct {
+	Service inbound.Connect
 }
 
 // Handler : For starting a server
 func Handler(service inbound.Connect) {
-	handler := &httpHandler{service: service}
+	handler := HttpHandler{Service: service}
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/tasks", handler.CreateTask)
@@ -60,13 +60,13 @@ func Handler(service inbound.Connect) {
 // @Faliure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /tasks [post]
-func (h *httpHandler) CreateTask(c *gin.Context) {
+func (h HttpHandler) CreateTask(c *gin.Context) {
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := h.service.CreateTask(task)
+	id, err := h.Service.CreateTask(task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Create_task task"})
 		return
@@ -82,8 +82,8 @@ func (h *httpHandler) CreateTask(c *gin.Context) {
 //@Success 200 {object} domain.Task "Tasks in database"
 //@Failure 500 {object} map[string]string
 //@Router /tasks [get]
-func (h *httpHandler) GetAll(c *gin.Context) {
-	tasks, err := h.service.GetAll()
+func (h HttpHandler) GetAll(c *gin.Context) {
+	tasks, err := h.Service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
 		return
@@ -100,9 +100,9 @@ func (h *httpHandler) GetAll(c *gin.Context) {
 //@Success 200 {object} domain.Task "Tasks in database by ID"
 //@Failure 404 {object} map[string]string
 //@Router /tasks/{id} [get]
-func (h *httpHandler) GetByID(c *gin.Context) {
+func (h HttpHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
-	task, err := h.service.GetByID(id)
+	task, err := h.Service.GetByID(id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 		return
@@ -120,13 +120,13 @@ func (h *httpHandler) GetByID(c *gin.Context) {
 //@Failure 500 {object} map[string]string
 //@Faliure 400 {object} map[string]string
 //@Router /tasks [put]
-func (h *httpHandler) UpdateTask(c *gin.Context) {
+func (h HttpHandler) UpdateTask(c *gin.Context) {
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.service.UpdateTask(task)
+	err := h.Service.UpdateTask(task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update the requested task"})
 		return
@@ -139,13 +139,13 @@ func (h *httpHandler) UpdateTask(c *gin.Context) {
 //@Tags tasks
 //@Accept json
 //@Produce json
-//@Param task body domain.Task true "Task to delete"
+//@Param id path string true "Task to delete"
 //@Success 200 "OK"
 //@Failure 500 {object} map[string]string
 //@Router /tasks/{id} [delete]
-func (h *httpHandler) Delete(c *gin.Context) {
+func (h HttpHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
-	err := h.service.Delete(id)
+	err := h.Service.Delete(id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete the requested task"})
 		return
