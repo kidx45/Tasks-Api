@@ -8,10 +8,10 @@ or in psql (recommend using shell or bash). <br>
 **Schema**: <br>
 *For MySQL* - <br>
 ```sql
-CREATE DATABASE IF NOT EXISTS taskdb;
+CREATE DATABASE taskdb;
 USE taskdb;
 
-CREATE TABLE IF NOT EXISTS tasks (
+CREATE TABLE tasks (
 id CHAR(36) PRIMARY KEY,
 title VARCHAR(150) NOT NULL,
 description VARCHAR(300) NOT NULL
@@ -20,10 +20,10 @@ description VARCHAR(300) NOT NULL
 *For psql in bash or in sql_shell* -
 **SQL**
 ```sql
-CREATE DATABASE IF NOT EXISTS task_api;
+CREATE DATABASE task_api;
 \c task_api
 
-CREATE TABLE IF NOT EXISTS tasks (
+CREATE TABLE tasks (
 id CHAR(36) PRIMARY KEY,
 title VARCHAR(150) NOT NULL,
 description VARCHAR(300) NOT NULL
