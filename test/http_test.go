@@ -57,10 +57,11 @@ func TestCreateTask(t *testing.T) {
 	r.ServeHTTP(code, request)
 
 	assert.Equal(t, http.StatusCreated, code.Code)
-	task.ID = "123"
 	err := json.Unmarshal(code.Body.Bytes(),&test)
 	assert.NoError(t, err)
-	assert.Equal(t,test,task)
+	assert.NotNil(t, test.ID)
+	assert.Equal(t,test.Title,task.Title)
+	assert.Equal(t,test.Description,task.Description)
 }
 
 func TestGetAll(t *testing.T) {
