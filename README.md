@@ -7,6 +7,7 @@ Before using the API, make sure to either have either mysql or postgres (psql) i
 or in psql (recommend using shell or bash). <br>
 **Schema**: <br>
 *For MySQL* - <br>
+**SQL**
 ```sql
 CREATE DATABASE taskdb;
 USE taskdb;
@@ -17,7 +18,7 @@ title VARCHAR(150) NOT NULL,
 description VARCHAR(300) NOT NULL
 );
 ```
-*For psql in bash or in sql_shell* -
+*For psql in bash or in sql_shell* -<br>
 **SQL**
 ```sql
 CREATE DATABASE task_api;
@@ -102,11 +103,11 @@ Next, head over to the browser of your choice and visit the following website:<b
 ```url
 http://localhost:8080/swagger/index.html
 ```
-<br><br>
-If everything is done correctly so far you should see this on your browser:<br>
+<br>
+If everything is done correctly so far you should see this on your browser:<br><br>
 <img src="images/diagram.png" alt="Architecture Diagram" width="1000"/>
 
-<br><br>
+<br>
 You should also be able to see this prompt on your terminal meaning it your API is working well on the browser:<br>
 **powershell**
 ```powershell
