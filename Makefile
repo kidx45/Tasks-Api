@@ -7,6 +7,9 @@ tidy:
 lint:
 	golangci-lint run
 
+testing:
+	go test -v ./test	
+
 get-all-tasks:
 	curl http://localhost:8080/tasks
 
