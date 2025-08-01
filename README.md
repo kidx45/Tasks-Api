@@ -103,11 +103,10 @@ Next, head over to the browser of your choice and visit the following website:<b
 ```url
 http://localhost:8080/swagger/index.html
 ```
-<br>
+
 If everything is done correctly so far you should see this on your browser:<br><br>
 <img src="images/diagram.png" alt="Architecture Diagram" width="1000"/>
 
-<br>
 You should also be able to see this prompt on your terminal meaning it your API is working well on the browser:<br>
 **powershell**
 ```powershell
