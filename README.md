@@ -10,9 +10,9 @@
   - [Swagger UI](#3-swagger-ui)
 
 ### Overview <br>
-> **Task-api**: This API was designed in the intention of handling list of tasks in and out our database, allowing users to create a task and saving into the database 
-> of their choice (for now: either in psql or mysql), get all tasks avaliable in the database, get a task using the ID, update contents of a task (whether the
-> title, description or both) and delete task from a database by ID.
+> **Task-api**: Task-api: This API was created with the goal of managing lists of tasks entering and leaving our database. It enables users 
+> to create tasks and save them in the database of their choice (at this time, either in MySQL or Postgres), retrieve all tasks that are available 
+> in the database, retrieve a task using its ID, update a task's contents (description, title, or both), and remove tasks from a database by their ID.
 
 ## Prerequisites <br>
 Before using the API, make sure to either have either mysql or postgres (psql) in your operating system installed. Also make sure to run the schema below either in mysql
