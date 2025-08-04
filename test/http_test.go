@@ -20,12 +20,12 @@ type MockConnect struct {
 	mock.Mock
 }
 
-func (m *MockConnect) CreateTask(c context.Context, task domain.Task) (string, error) {
-	args := m.Called(c,task)
+func (m *MockConnect) CreateTask(c context.Context, task domain.UserInput) (string, error) {
+	args := m.Called(c, task)
 	return args.String(0), args.Error(1)
 }
 func (m *MockConnect) GetByID(c context.Context, id string) (domain.Task, error) {
-	args := m.Called(c,id)
+	args := m.Called(c, id)
 	return args.Get(0).(domain.Task), args.Error(1)
 }
 func (m *MockConnect) GetAll(c context.Context) ([]domain.Task, error) {
@@ -33,11 +33,11 @@ func (m *MockConnect) GetAll(c context.Context) ([]domain.Task, error) {
 	return args.Get(0).([]domain.Task), args.Error(1)
 }
 func (m *MockConnect) UpdateTask(c context.Context, task domain.Task) error {
-	args := m.Called(c,task)
+	args := m.Called(c, task)
 	return args.Error(0)
 }
 func (m *MockConnect) Delete(c context.Context, id string) error {
-	args := m.Called(c,id)
+	args := m.Called(c, id)
 	return args.Error(0)
 }
 
@@ -49,7 +49,7 @@ func TestCreateTask(t *testing.T) {
 	r.POST("/tasks", handler.CreateTask)
 
 	var test domain.Task
-	task := domain.Task{Title: "Test", Description: "Desc"}
+	task := domain.UserInput{Title: "Test", Description: "Desc"}
 	mockService.On("CreateTask", context.Background(), task).Return("123", nil)
 
 	body, _ := json.Marshal(task)
@@ -79,7 +79,7 @@ func TestGetAll(t *testing.T) {
 		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	MockConnect.On("GetAll",context.Background()).Return(task, nil)
+	MockConnect.On("GetAll", context.Background()).Return(task, nil)
 	request, _ := http.NewRequest("GET", "/tasks", nil)
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()
@@ -104,7 +104,7 @@ func TestGetByID(t *testing.T) {
 		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	MockConnect.On("GetByID", context.Background(),task[0].ID).Return(task[0], nil)
+	MockConnect.On("GetByID", context.Background(), task[0].ID).Return(task[0], nil)
 	request, _ := http.NewRequest("GET", "/tasks/1", nil)
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()
@@ -128,7 +128,7 @@ func TestUpdateTask(t *testing.T) {
 		ID: "1", Title: "test1", Description: "testing123",
 	}
 
-	MockConnect.On("UpdateTask", context.Background(),task).Return(nil)
+	MockConnect.On("UpdateTask", context.Background(), task).Return(nil)
 	body, _ := json.Marshal(task)
 	request, _ := http.NewRequest("PUT", "/tasks", bytes.NewBuffer(body))
 	request.Header.Set("Content-Type", "application/json")
@@ -148,7 +148,7 @@ func TestDeleteTask(t *testing.T) {
 	router := gin.New()
 	router.DELETE("/tasks/:id", handler.Delete)
 
-	MockConnect.On("Delete", context.Background(),"1").Return(nil)
+	MockConnect.On("Delete", context.Background(), "1").Return(nil)
 	request, _ := http.NewRequest("DELETE", "/tasks/1", nil)
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()

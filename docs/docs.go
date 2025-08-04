@@ -103,7 +103,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Task"
+                            "$ref": "#/definitions/domain.UserInput"
                         }
                     }
                 ],
@@ -212,6 +212,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
+                }
+            }
+        },
+        "domain.UserInput": {
+            "type": "object",
+            "properties": {
+                "description": {
                     "type": "string"
                 },
                 "title": {

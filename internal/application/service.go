@@ -18,7 +18,7 @@ func NewConnect(repo outbound.Database) inbound.Connect {
 }
 
 // CreateTask : To create a task
-func (s Connect) CreateTask(c context.Context, task domain.Task) (string, error) {
+func (s Connect) CreateTask(c context.Context, task domain.UserInput) (string, error) {
 	return s.repo.CreateTask(c, task)
 }
 
@@ -39,5 +39,5 @@ func (s Connect) UpdateTask(c context.Context, task domain.Task) error {
 
 // Delete : To delete task by id
 func (s Connect) Delete(c context.Context, id string) error {
-	return s.repo.Delete(c,id)
+	return s.repo.Delete(c, id)
 }

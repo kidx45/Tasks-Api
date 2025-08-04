@@ -46,7 +46,7 @@ func CallMysql(db *sql.DB) outbound.Database {
 	return mysqlRepo{db: db}
 }
 
-func (r mysqlRepo) CreateTask(c context.Context, task domain.Task) (string, error) {
+func (r mysqlRepo) CreateTask(c context.Context, task domain.UserInput) (string, error) {
 	id := uuid.New().String()
 	_, err := r.db.ExecContext(c, "INSERT INTO tasks (id,title,description) VALUES (?,?,?)", id, task.Title, task.Description)
 	return id, err
@@ -94,7 +94,7 @@ func (r mysqlRepo) UpdateTask(c context.Context, task domain.Task) error {
 }
 
 func (r mysqlRepo) Delete(c context.Context, id string) error {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", id)
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = ?", id)
 
 	var tasks domain.Task
 	err := row.Scan(&tasks.ID, &tasks.Title, &tasks.Description)
@@ -103,6 +103,6 @@ func (r mysqlRepo) Delete(c context.Context, id string) error {
 	}
 
 	query := "DELETE FROM tasks WHERE id = ?"
-	_, errs := r.db.Exec(query, id)
+	_, errs := r.db.ExecContext(c, query, id)
 	return errs
 }

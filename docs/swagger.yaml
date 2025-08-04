@@ -9,6 +9,13 @@ definitions:
       title:
         type: string
     type: object
+  domain.UserInput:
+    properties:
+      description:
+        type: string
+      title:
+        type: string
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -45,7 +52,7 @@ paths:
         name: task
         required: true
         schema:
-          $ref: '#/definitions/domain.Task'
+          $ref: '#/definitions/domain.UserInput'
       produces:
       - application/json
       responses:

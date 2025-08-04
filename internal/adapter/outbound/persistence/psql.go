@@ -52,7 +52,7 @@ func CallPsql(db *sql.DB) outbound.Database {
 	return postgresRepo{db: db}
 }
 
-func (r postgresRepo) CreateTask(c context.Context, task domain.Task) (string, error) {
+func (r postgresRepo) CreateTask(c context.Context, task domain.UserInput) (string, error) {
 	id := uuid.New().String()
 	_, err := r.db.ExecContext(c, "INSERT INTO tasks (id, title, description) VALUES ($1, $2, $3)", id, task.Title, task.Description)
 	return id, err
@@ -100,7 +100,7 @@ func (r postgresRepo) UpdateTask(c context.Context, task domain.Task) error {
 }
 
 func (r postgresRepo) Delete(c context.Context, id string) error {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = $1", id)
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = $1", id)
 
 	var tasks domain.Task
 	err := row.Scan(&tasks.ID, &tasks.Title, &tasks.Description)
@@ -109,6 +109,6 @@ func (r postgresRepo) Delete(c context.Context, id string) error {
 	}
 
 	query := "DELETE FROM tasks WHERE id = $1"
-	_, errs := r.db.Exec(query, id)
+	_, errs := r.db.ExecContext(c, query, id)
 	return errs
 }

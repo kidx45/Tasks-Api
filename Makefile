@@ -13,6 +13,9 @@ Format:
 testing:
 	go test -v ./test	
 
+swag:
+	swag init --dir ./internal/adapter/inbound/http,./internal/domain  --generalInfo ../../../../cmd/main.go
+
 get-all-tasks:
 	curl http://localhost:8080/tasks
 

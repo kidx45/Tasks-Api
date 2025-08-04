@@ -6,3 +6,9 @@ type Task struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
+
+// UserInput : TO accept user input when creating task
+type UserInput struct {
+	Title       string `json:"title"`
+	Description string `json:"description"`
+}

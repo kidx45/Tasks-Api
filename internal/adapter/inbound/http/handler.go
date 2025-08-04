@@ -56,7 +56,7 @@ func Handler(service inbound.Connect) {
 // @Tags tasks
 // @Accept json
 // @Produce json
-// @Param task body domain.Task true "Task to be created"
+// @Param task body domain.UserInput true "Task to be created"
 // @Success 201 {object} domain.Task "Created task"
 // @Faliure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
@@ -64,16 +64,19 @@ func Handler(service inbound.Connect) {
 func (h HTTPHandler) CreateTask(c *gin.Context) {
 	rqt := c.Request.Context()
 	var task domain.Task
-	if err := c.BindJSON(&task); err != nil {
+	var input domain.UserInput
+	if err := c.BindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := h.Service.CreateTask(rqt,task)
+	id, err := h.Service.CreateTask(rqt, input)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Create_task task"})
 		return
 	}
 	task.ID = id
+	task.Title = input.Title
+	task.Description = input.Description
 	c.IndentedJSON(http.StatusCreated, task)
 }
 
@@ -95,7 +98,6 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tasks)
 }
 
-
 // GetByID : To get tasks by id
 // @Summary Get task by id
 // @Description Retrive a task from the databse by accepting an id
@@ -109,7 +111,7 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 func (h HTTPHandler) GetByID(c *gin.Context) {
 	rqt := c.Request.Context()
 	id := c.Param("id")
-	task, err := h.Service.GetByID(rqt,id)
+	task, err := h.Service.GetByID(rqt, id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 		return
@@ -135,7 +137,7 @@ func (h HTTPHandler) UpdateTask(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.Service.UpdateTask(rqt,task)
+	err := h.Service.UpdateTask(rqt, task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update the requested task"})
 		return
@@ -156,7 +158,7 @@ func (h HTTPHandler) UpdateTask(c *gin.Context) {
 func (h HTTPHandler) Delete(c *gin.Context) {
 	rqt := c.Request.Context()
 	id := c.Param("id")
-	err := h.Service.Delete(rqt,id)
+	err := h.Service.Delete(rqt, id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete the requested task"})
 		return
