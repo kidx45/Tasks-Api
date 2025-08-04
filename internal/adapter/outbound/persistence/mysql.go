@@ -2,13 +2,13 @@ package persistence
 
 import (
 	"database/sql"
+	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"task-api/internal/domain"
 	"task-api/internal/port/outbound"
-	"github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
-	"github.com/joho/godotenv"
 )
 
 type mysqlRepo struct {

@@ -2,14 +2,13 @@ package persistence
 
 import (
 	"database/sql"
-	"log"
-	"task-api/internal/domain"
-	"task-api/internal/port/outbound"
-	"os"
 	"fmt"
 	"github.com/google/uuid"
+	"log"
+	"os"
+	"task-api/internal/domain"
+	"task-api/internal/port/outbound"
 	//imported to use psql
-	_ "github.com/lib/pq"
 	"github.com/joho/godotenv"
 )
 
@@ -23,14 +22,14 @@ func ConnectToPostgres() *sql.DB {
 	if errs != nil {
 		log.Fatal("Error loading .env file")
 	}
-	
+
 	location := fmt.Sprintf(
-    	"postgres://%s:%s@%s:%s/%s?sslmode=disable",
-    	os.Getenv("DBUSER"),
-    	os.Getenv("DBPASS"),
-    	os.Getenv("DBHOST"),
-    	os.Getenv("DBPORT"),
-    	"task_api",
+		"postgres://%s:%s@%s:%s/%s?sslmode=disable",
+		os.Getenv("DBUSER"),
+		os.Getenv("DBPASS"),
+		os.Getenv("DBHOST"),
+		os.Getenv("DBPORT"),
+		"task_api",
 	)
 
 	db, err := sql.Open("postgres", location)

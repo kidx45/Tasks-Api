@@ -10,12 +10,13 @@ import (
 	"bufio"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 	"os"
 	"strings"
+	_ "task-api/docs"
 	httpy "task-api/internal/adapter/inbound/http"
 	"task-api/internal/adapter/outbound/persistence"
 	service "task-api/internal/application"
-	_ "task-api/docs"
 )
 
 func getdata(s string, r *bufio.Reader) (string, error) {

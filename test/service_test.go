@@ -1,12 +1,11 @@
 package test
 
 import (
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	service "task-api/internal/application"
 	"task-api/internal/domain"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 )
 
 // Mock for outbound.Database
@@ -51,16 +50,16 @@ func TestServiceCreateTask(t *testing.T) {
 func TestServiceGetAllTask(t *testing.T) {
 	mock := new(MockDatabase)
 	service := service.NewConnect(mock)
-	
-	task := []domain.Task {
+
+	task := []domain.Task{
 		{ID: "1", Title: "test1", Description: "testing123"},
-		{ID: "2", Title: "test2", Description: "testing456"}, 
+		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	mock.On("GetAll").Return(task,nil)
-	tasks,err := service.GetAll()
+	mock.On("GetAll").Return(task, nil)
+	tasks, err := service.GetAll()
 
-	assert.Equal(t, tasks,task)
+	assert.Equal(t, tasks, task)
 	assert.NoError(t, err)
 }
 
@@ -68,14 +67,14 @@ func TestServiceGetByID(t *testing.T) {
 	mock := new(MockDatabase)
 	service := service.NewConnect(mock)
 
-	task := []domain.Task {
+	task := []domain.Task{
 		{ID: "1", Title: "test1", Description: "testing123"},
-		{ID: "2", Title: "test2", Description: "testing456"}, 
+		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	mock.On("GetByID", "1").Return(task[0],nil)
+	mock.On("GetByID", "1").Return(task[0], nil)
 	test, err := service.GetByID("1")
-	
+
 	assert.Equal(t, test, task[0])
 	assert.NoError(t, err)
 }
@@ -87,7 +86,7 @@ func TestServiceUpdateTask(t *testing.T) {
 	task := domain.Task{
 		ID: "1", Title: "test1", Description: "testing123",
 	}
-	mock.On("UpdateTask",task).Return(nil)
+	mock.On("UpdateTask", task).Return(nil)
 	err := service.UpdateTask(task)
 
 	assert.NoError(t, err)
@@ -98,8 +97,8 @@ func TestServiceDelete(t *testing.T) {
 	service := service.NewConnect(mock)
 
 	ID := "1"
-	mock.On("Delete",ID).Return(nil)
+	mock.On("Delete", ID).Return(nil)
 	err := service.Delete(ID)
 
-	assert.NoError(t ,err)
+	assert.NoError(t, err)
 }

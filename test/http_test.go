@@ -8,6 +8,7 @@ import (
 	httpy "task-api/internal/adapter/inbound/http"
 	"task-api/internal/domain"
 	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -42,7 +43,7 @@ func (m *MockConnect) Delete(id string) error {
 func TestCreateTask(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	mockService := new(MockConnect)
-	handler := httpy.HttpHandler{Service: mockService}
+	handler := httpy.HTTPHandler{Service: mockService}
 	r := gin.New()
 	r.POST("/tasks", handler.CreateTask)
 
@@ -57,97 +58,97 @@ func TestCreateTask(t *testing.T) {
 	r.ServeHTTP(code, request)
 
 	assert.Equal(t, http.StatusCreated, code.Code)
-	err := json.Unmarshal(code.Body.Bytes(),&test)
+	err := json.Unmarshal(code.Body.Bytes(), &test)
 	assert.NoError(t, err)
 	assert.NotNil(t, test.ID)
-	assert.Equal(t,test.Title,task.Title)
-	assert.Equal(t,test.Description,task.Description)
+	assert.Equal(t, test.Title, task.Title)
+	assert.Equal(t, test.Description, task.Description)
 }
 
 func TestGetAll(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	MockConnect := new(MockConnect)
-	handler := httpy.HttpHandler{Service: MockConnect}
+	handler := httpy.HTTPHandler{Service: MockConnect}
 	router := gin.New()
 	router.GET("/tasks", handler.GetAll)
 
 	var tasks []domain.Task
-	task := []domain.Task {
+	task := []domain.Task{
 		{ID: "1", Title: "test1", Description: "testing123"},
-		{ID: "2", Title: "test2", Description: "testing456"}, 
+		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	MockConnect.On("GetAll").Return(task,nil)
+	MockConnect.On("GetAll").Return(task, nil)
 	request, _ := http.NewRequest("GET", "/tasks", nil)
-	request.Header.Set("Content-Type", "application/json")
-	code := httptest.NewRecorder()
-	router.ServeHTTP(code,request)
-
-	assert.Equal(t, http.StatusOK, code.Code)
-	err := json.Unmarshal(code.Body.Bytes(),&tasks)
-	assert.NoError(t, err)
-	assert.Equal(t,tasks,task)
-}
-
-func TestGetByID(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	MockConnect := new(MockConnect)
-	handler := httpy.HttpHandler{Service: MockConnect}
-	router := gin.New()
-	router.GET("/tasks/:id", handler.GetByID)
-
-	var test domain.Task
-	task := []domain.Task {
-		{ID: "1", Title: "test1", Description: "testing123"},
-		{ID: "2", Title: "test2", Description: "testing456"}, 
-	}
-
-	MockConnect.On("GetByID", task[0].ID).Return(task[0],nil)
-	request,_ := http.NewRequest("GET","/tasks/1", nil)
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()
 	router.ServeHTTP(code, request)
 
 	assert.Equal(t, http.StatusOK, code.Code)
-	err := json.Unmarshal(code.Body.Bytes(),&test)
-	assert.NoError(t,err)
-	assert.Equal(t, test,task[0])
+	err := json.Unmarshal(code.Body.Bytes(), &tasks)
+	assert.NoError(t, err)
+	assert.Equal(t, tasks, task)
+}
+
+func TestGetByID(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	MockConnect := new(MockConnect)
+	handler := httpy.HTTPHandler{Service: MockConnect}
+	router := gin.New()
+	router.GET("/tasks/:id", handler.GetByID)
+
+	var test domain.Task
+	task := []domain.Task{
+		{ID: "1", Title: "test1", Description: "testing123"},
+		{ID: "2", Title: "test2", Description: "testing456"},
+	}
+
+	MockConnect.On("GetByID", task[0].ID).Return(task[0], nil)
+	request, _ := http.NewRequest("GET", "/tasks/1", nil)
+	request.Header.Set("Content-Type", "application/json")
+	code := httptest.NewRecorder()
+	router.ServeHTTP(code, request)
+
+	assert.Equal(t, http.StatusOK, code.Code)
+	err := json.Unmarshal(code.Body.Bytes(), &test)
+	assert.NoError(t, err)
+	assert.Equal(t, test, task[0])
 }
 
 func TestUpdateTask(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	MockConnect := new(MockConnect)
-	handler := httpy.HttpHandler{Service: MockConnect}
+	handler := httpy.HTTPHandler{Service: MockConnect}
 	router := gin.New()
-	router.PUT("/tasks",handler.UpdateTask)
+	router.PUT("/tasks", handler.UpdateTask)
 
 	var update domain.Task
 	task := domain.Task{
 		ID: "1", Title: "test1", Description: "testing123",
 	}
 
-	MockConnect.On("UpdateTask",task).Return(nil)
-	body,_ := json.Marshal(task)
-	request,_ := http.NewRequest("PUT","/tasks",bytes.NewBuffer(body))
+	MockConnect.On("UpdateTask", task).Return(nil)
+	body, _ := json.Marshal(task)
+	request, _ := http.NewRequest("PUT", "/tasks", bytes.NewBuffer(body))
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()
 	router.ServeHTTP(code, request)
 
 	assert.Equal(t, http.StatusOK, code.Code)
-	err := json.Unmarshal(code.Body.Bytes(),&update)
+	err := json.Unmarshal(code.Body.Bytes(), &update)
 	assert.NoError(t, err)
-	assert.Equal(t, update,task)
+	assert.Equal(t, update, task)
 }
 
 func TestDeleteTask(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	MockConnect := new(MockConnect)
-	handler := httpy.HttpHandler{Service: MockConnect}
+	handler := httpy.HTTPHandler{Service: MockConnect}
 	router := gin.New()
 	router.DELETE("/tasks/:id", handler.Delete)
 
 	MockConnect.On("Delete", "1").Return(nil)
-	request,_ := http.NewRequest("DELETE","/tasks/1",nil)
+	request, _ := http.NewRequest("DELETE", "/tasks/1", nil)
 	request.Header.Set("Content-Type", "application/json")
 	code := httptest.NewRecorder()
 	router.ServeHTTP(code, request)

@@ -23,20 +23,20 @@ import (
 	"net/http"
 	"task-api/internal/domain"
 	"task-api/internal/port/inbound"
+
 	"github.com/gin-gonic/gin"
-	"github.com/swaggo/gin-swagger"
-    "github.com/swaggo/files"
-    
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// Struct for connect to service in application
-type HttpHandler struct {
+// HTTPHandler : Struct for connect to service in application
+type HTTPHandler struct {
 	Service inbound.Connect
 }
 
 // Handler : For starting a server
 func Handler(service inbound.Connect) {
-	handler := HttpHandler{Service: service}
+	handler := HTTPHandler{Service: service}
 	router := gin.Default()
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	router.POST("/tasks", handler.CreateTask)
@@ -50,6 +50,7 @@ func Handler(service inbound.Connect) {
 
 }
 
+// CreateTask : Function to create a task
 // @Summary Create a task
 // @Description Create a task by accepting title and description from user
 // @Tags tasks
@@ -60,7 +61,7 @@ func Handler(service inbound.Connect) {
 // @Faliure 400 {object} map[string]string
 // @Failure 500 {object} map[string]string
 // @Router /tasks [post]
-func (h HttpHandler) CreateTask(c *gin.Context) {
+func (h HTTPHandler) CreateTask(c *gin.Context) {
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -75,14 +76,15 @@ func (h HttpHandler) CreateTask(c *gin.Context) {
 	c.IndentedJSON(http.StatusCreated, task)
 }
 
-//@Summary Get all tasks
-//@Description Retrive all tasks avaliable in the database
-//@Tags tasks
-//@Produce json
-//@Success 200 {object} domain.Task "Tasks in database"
-//@Failure 500 {object} map[string]string
-//@Router /tasks [get]
-func (h HttpHandler) GetAll(c *gin.Context) {
+// GetAll : To get all tasks from the database
+// @Summary Get all tasks
+// @Description Retrive all tasks avaliable in the database
+// @Tags tasks
+// @Produce json
+// @Success 200 {object} domain.Task "Tasks in database"
+// @Failure 500 {object} map[string]string
+// @Router /tasks [get]
+func (h HTTPHandler) GetAll(c *gin.Context) {
 	tasks, err := h.Service.GetAll()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
@@ -91,16 +93,17 @@ func (h HttpHandler) GetAll(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tasks)
 }
 
-//@Summary Get task by id
-//@Description Retrive a task from the databse by accepting an id
-//@Tags tasks
-//@Accept json
-//@Produce json
-//@Param id path string true "Task ID"
-//@Success 200 {object} domain.Task "Tasks in database by ID"
-//@Failure 404 {object} map[string]string
-//@Router /tasks/{id} [get]
-func (h HttpHandler) GetByID(c *gin.Context) {
+// GetByID : To get tasks by id
+// @Summary Get task by id
+// @Description Retrive a task from the databse by accepting an id
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "Task ID"
+// @Success 200 {object} domain.Task "Tasks in database by ID"
+// @Failure 404 {object} map[string]string
+// @Router /tasks/{id} [get]
+func (h HTTPHandler) GetByID(c *gin.Context) {
 	id := c.Param("id")
 	task, err := h.Service.GetByID(id)
 	if err != nil {
@@ -110,17 +113,18 @@ func (h HttpHandler) GetByID(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, task)
 }
 
-//@Summary Update task by ID
-//@Description Update contents of a task whether the title or the description using the id
-//@Tags tasks
-//@Accept json
-//@Produce json
-//@Param task body domain.Task true "Task to update"
-//@Success 200 {object} domain.Task "Tasks updated"
-//@Failure 500 {object} map[string]string
-//@Faliure 400 {object} map[string]string
-//@Router /tasks [put]
-func (h HttpHandler) UpdateTask(c *gin.Context) {
+// UpdateTask : TO update task by Id
+// @Summary Update task by ID
+// @Description Update contents of a task whether the title or the description using the id
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param task body domain.Task true "Task to update"
+// @Success 200 {object} domain.Task "Tasks updated"
+// @Failure 500 {object} map[string]string
+// @Faliure 400 {object} map[string]string
+// @Router /tasks [put]
+func (h HTTPHandler) UpdateTask(c *gin.Context) {
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -134,16 +138,17 @@ func (h HttpHandler) UpdateTask(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, task)
 }
 
-//@Summary Delete task by ID
-//@Description Delete a task for a database using the id
-//@Tags tasks
-//@Accept json
-//@Produce json
-//@Param id path string true "Task to delete"
-//@Success 200 "OK"
-//@Failure 500 {object} map[string]string
-//@Router /tasks/{id} [delete]
-func (h HttpHandler) Delete(c *gin.Context) {
+// Delete : To Delete task by ID
+// @Summary Delete task by ID
+// @Description Delete a task for a database using the id
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "Task to delete"
+// @Success 200 "OK"
+// @Failure 500 {object} map[string]string
+// @Router /tasks/{id} [delete]
+func (h HTTPHandler) Delete(c *gin.Context) {
 	id := c.Param("id")
 	err := h.Service.Delete(id)
 	if err != nil {

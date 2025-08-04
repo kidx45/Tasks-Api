@@ -7,6 +7,9 @@ tidy:
 lint:
 	golangci-lint run
 
+Format:
+	gofmt -w .
+
 testing:
 	go test -v ./test	
 
