@@ -62,12 +62,13 @@ func Handler(service inbound.Connect) {
 // @Failure 500 {object} map[string]string
 // @Router /tasks [post]
 func (h HTTPHandler) CreateTask(c *gin.Context) {
+	rqt := c.Request.Context()
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	id, err := h.Service.CreateTask(task)
+	id, err := h.Service.CreateTask(rqt,task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Create_task task"})
 		return
@@ -85,7 +86,8 @@ func (h HTTPHandler) CreateTask(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /tasks [get]
 func (h HTTPHandler) GetAll(c *gin.Context) {
-	tasks, err := h.Service.GetAll()
+	rqt := c.Request.Context()
+	tasks, err := h.Service.GetAll(rqt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
 		return
@@ -104,8 +106,9 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 // @Failure 404 {object} map[string]string
 // @Router /tasks/{id} [get]
 func (h HTTPHandler) GetByID(c *gin.Context) {
+	rqt := c.Request.Context()
 	id := c.Param("id")
-	task, err := h.Service.GetByID(id)
+	task, err := h.Service.GetByID(rqt,id)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Task not found"})
 		return
@@ -113,7 +116,7 @@ func (h HTTPHandler) GetByID(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, task)
 }
 
-// UpdateTask : TO update task by Id
+// UpdateTask : To update task by Id
 // @Summary Update task by ID
 // @Description Update contents of a task whether the title or the description using the id
 // @Tags tasks
@@ -125,12 +128,13 @@ func (h HTTPHandler) GetByID(c *gin.Context) {
 // @Faliure 400 {object} map[string]string
 // @Router /tasks [put]
 func (h HTTPHandler) UpdateTask(c *gin.Context) {
+	rqt := c.Request.Context()
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	err := h.Service.UpdateTask(task)
+	err := h.Service.UpdateTask(rqt,task)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "unable to update the requested task"})
 		return
@@ -149,8 +153,9 @@ func (h HTTPHandler) UpdateTask(c *gin.Context) {
 // @Failure 500 {object} map[string]string
 // @Router /tasks/{id} [delete]
 func (h HTTPHandler) Delete(c *gin.Context) {
+	rqt := c.Request.Context()
 	id := c.Param("id")
-	err := h.Service.Delete(id)
+	err := h.Service.Delete(rqt,id)
 	if err != nil {
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": "Unable to delete the requested task"})
 		return

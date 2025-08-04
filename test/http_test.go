@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -19,23 +20,23 @@ type MockConnect struct {
 	mock.Mock
 }
 
-func (m *MockConnect) CreateTask(task domain.Task) (string, error) {
+func (m *MockConnect) CreateTask(c context.Context, task domain.Task) (string, error) {
 	args := m.Called(task)
 	return args.String(0), args.Error(1)
 }
-func (m *MockConnect) GetByID(id string) (domain.Task, error) {
+func (m *MockConnect) GetByID(c context.Context, id string) (domain.Task, error) {
 	args := m.Called(id)
 	return args.Get(0).(domain.Task), args.Error(1)
 }
-func (m *MockConnect) GetAll() ([]domain.Task, error) {
+func (m *MockConnect) GetAll(c context.Context) ([]domain.Task, error) {
 	args := m.Called()
 	return args.Get(0).([]domain.Task), args.Error(1)
 }
-func (m *MockConnect) UpdateTask(task domain.Task) error {
+func (m *MockConnect) UpdateTask(c context.Context, task domain.Task) error {
 	args := m.Called(task)
 	return args.Error(0)
 }
-func (m *MockConnect) Delete(id string) error {
+func (m *MockConnect) Delete(c context.Context, id string) error {
 	args := m.Called(id)
 	return args.Error(0)
 }
@@ -49,7 +50,7 @@ func TestCreateTask(t *testing.T) {
 
 	var test domain.Task
 	task := domain.Task{Title: "Test", Description: "Desc"}
-	mockService.On("CreateTask", task).Return("123", nil)
+	mockService.On("CreateTask", context.Background(), task).Return("123", nil)
 
 	body, _ := json.Marshal(task)
 	request, _ := http.NewRequest("POST", "/tasks", bytes.NewBuffer(body))

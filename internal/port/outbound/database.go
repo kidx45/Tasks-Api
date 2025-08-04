@@ -1,12 +1,15 @@
 package outbound
 
-import "task-api/internal/domain"
+import (
+	"context"
+	"task-api/internal/domain"
+)
 
 // Database : Interface for database structure in persistence
 type Database interface {
-	CreateTask(task domain.Task) (string, error)
-	GetByID(id string) (domain.Task, error)
-	GetAll() ([]domain.Task, error)
-	UpdateTask(task domain.Task) error
-	Delete(id string) error
+	CreateTask(c context.Context, task domain.Task) (string, error)
+	GetByID(c context.Context, id string) (domain.Task, error)
+	GetAll(c context.Context) ([]domain.Task, error)
+	UpdateTask(c context.Context, task domain.Task) error
+	Delete(c context.Context, id string) error
 }

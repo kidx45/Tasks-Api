@@ -2,6 +2,7 @@ package test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
@@ -19,27 +20,27 @@ type TestingStruct struct {
 	tasks map[string]domain.Task
 }
 
-func (r TestingStruct) CreateTask(task domain.Task) (string, error) {
+func (r TestingStruct) CreateTask(c context.Context, task domain.Task) (string, error) {
 	id := "1"
 	task.ID = id
 	r.tasks[id] = task
 	return id, nil
 }
-func (r TestingStruct) GetByID(id string) (domain.Task, error) {
+func (r TestingStruct) GetByID(c context.Context, id string) (domain.Task, error) {
 	task, ok := r.tasks[id]
 	if !ok {
 		return domain.Task{}, errors.New("not found")
 	}
 	return task, nil
 }
-func (r TestingStruct) GetAll() ([]domain.Task, error) {
+func (r TestingStruct) GetAll(c context.Context) ([]domain.Task, error) {
 	var out []domain.Task
 	for _, t := range r.tasks {
 		out = append(out, t)
 	}
 	return out, nil
 }
-func (r TestingStruct) UpdateTask(task domain.Task) error {
+func (r TestingStruct) UpdateTask(c context.Context, task domain.Task) error {
 	task, ok := r.tasks[task.ID]
 	if !ok {
 		return errors.New("not found")
@@ -47,7 +48,7 @@ func (r TestingStruct) UpdateTask(task domain.Task) error {
 	r.tasks[task.ID] = task
 	return nil
 }
-func (r TestingStruct) Delete(id string) error {
+func (r TestingStruct) Delete(c context.Context, id string) error {
 	_, ok := r.tasks[id]
 	if !ok {
 		return errors.New("not found")

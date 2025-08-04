@@ -1,13 +1,16 @@
 package persistence
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
-	"github.com/google/uuid"
 	"log"
 	"os"
 	"task-api/internal/domain"
 	"task-api/internal/port/outbound"
+
+	"github.com/google/uuid"
+
 	//imported to use psql
 	"github.com/joho/godotenv"
 )
@@ -49,14 +52,14 @@ func CallPsql(db *sql.DB) outbound.Database {
 	return postgresRepo{db: db}
 }
 
-func (r postgresRepo) CreateTask(task domain.Task) (string, error) {
+func (r postgresRepo) CreateTask(c context.Context, task domain.Task) (string, error) {
 	id := uuid.New().String()
-	_, err := r.db.Exec("INSERT INTO tasks (id, title, description) VALUES ($1, $2, $3)", id, task.Title, task.Description)
+	_, err := r.db.ExecContext(c, "INSERT INTO tasks (id, title, description) VALUES ($1, $2, $3)", id, task.Title, task.Description)
 	return id, err
 }
 
-func (r postgresRepo) GetByID(id string) (domain.Task, error) {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = $1", id)
+func (r postgresRepo) GetByID(c context.Context, id string) (domain.Task, error) {
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = $1", id)
 
 	var task domain.Task
 	err := row.Scan(&task.ID, &task.Title, &task.Description)
@@ -66,8 +69,8 @@ func (r postgresRepo) GetByID(id string) (domain.Task, error) {
 	return task, nil
 }
 
-func (r postgresRepo) GetAll() ([]domain.Task, error) {
-	rows, err := r.db.Query("SELECT id, title, description FROM tasks")
+func (r postgresRepo) GetAll(c context.Context) ([]domain.Task, error) {
+	rows, err := r.db.QueryContext(c, "SELECT id, title, description FROM tasks")
 	if err != nil {
 		return nil, err
 	}
@@ -84,19 +87,19 @@ func (r postgresRepo) GetAll() ([]domain.Task, error) {
 	return tasks, nil
 }
 
-func (r postgresRepo) UpdateTask(task domain.Task) error {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = $1", task.ID)
+func (r postgresRepo) UpdateTask(c context.Context, task domain.Task) error {
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = $1", task.ID)
 
 	var tasks domain.Task
 	err := row.Scan(&tasks.ID, &tasks.Title, &tasks.Description)
 	if err != nil {
 		return err
 	}
-	_, errs := r.db.Exec("UPDATE tasks SET title = $1, description = $2 WHERE id = $3", task.Title, task.Description, task.ID)
+	_, errs := r.db.ExecContext(c, "UPDATE tasks SET title = $1, description = $2 WHERE id = $3", task.Title, task.Description, task.ID)
 	return errs
 }
 
-func (r postgresRepo) Delete(id string) error {
+func (r postgresRepo) Delete(c context.Context, id string) error {
 	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = $1", id)
 
 	var tasks domain.Task

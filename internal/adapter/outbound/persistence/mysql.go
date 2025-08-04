@@ -1,14 +1,16 @@
 package persistence
 
 import (
+	"context"
 	"database/sql"
-	"github.com/go-sql-driver/mysql"
-	"github.com/google/uuid"
-	"github.com/joho/godotenv"
 	"log"
 	"os"
 	"task-api/internal/domain"
 	"task-api/internal/port/outbound"
+
+	"github.com/go-sql-driver/mysql"
+	"github.com/google/uuid"
+	"github.com/joho/godotenv"
 )
 
 type mysqlRepo struct {
@@ -44,14 +46,14 @@ func CallMysql(db *sql.DB) outbound.Database {
 	return mysqlRepo{db: db}
 }
 
-func (r mysqlRepo) CreateTask(task domain.Task) (string, error) {
+func (r mysqlRepo) CreateTask(c context.Context, task domain.Task) (string, error) {
 	id := uuid.New().String()
-	_, err := r.db.Exec("INSERT INTO tasks (id,title,description) VALUES (?,?,?)", id, task.Title, task.Description)
+	_, err := r.db.ExecContext(c, "INSERT INTO tasks (id,title,description) VALUES (?,?,?)", id, task.Title, task.Description)
 	return id, err
 }
 
-func (r mysqlRepo) GetByID(id string) (domain.Task, error) {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", id)
+func (r mysqlRepo) GetByID(c context.Context, id string) (domain.Task, error) {
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = ?", id)
 
 	var task domain.Task
 	err := row.Scan(&task.ID, &task.Title, &task.Description)
@@ -61,8 +63,8 @@ func (r mysqlRepo) GetByID(id string) (domain.Task, error) {
 	return task, nil
 }
 
-func (r mysqlRepo) GetAll() ([]domain.Task, error) {
-	rows, err := r.db.Query("SELECT id, title, description FROM tasks")
+func (r mysqlRepo) GetAll(c context.Context) ([]domain.Task, error) {
+	rows, err := r.db.QueryContext(c, "SELECT id, title, description FROM tasks")
 	if err != nil {
 		return nil, err
 	}
@@ -79,19 +81,19 @@ func (r mysqlRepo) GetAll() ([]domain.Task, error) {
 	return tasks, nil
 }
 
-func (r mysqlRepo) UpdateTask(task domain.Task) error {
-	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", task.ID)
+func (r mysqlRepo) UpdateTask(c context.Context, task domain.Task) error {
+	row := r.db.QueryRowContext(c, "SELECT id, title, description FROM tasks WHERE id = ?", task.ID)
 
 	var tasks domain.Task
 	err := row.Scan(&tasks.ID, &tasks.Title, &tasks.Description)
 	if err != nil {
 		return err
 	}
-	_, errs := r.db.Exec("UPDATE tasks SET title = ?, description = ? WHERE id = ?", task.Title, task.Description, task.ID)
+	_, errs := r.db.ExecContext(c, "UPDATE tasks SET title = ?, description = ? WHERE id = ?", task.Title, task.Description, task.ID)
 	return errs
 }
 
-func (r mysqlRepo) Delete(id string) error {
+func (r mysqlRepo) Delete(c context.Context, id string) error {
 	row := r.db.QueryRow("SELECT id, title, description FROM tasks WHERE id = ?", id)
 
 	var tasks domain.Task
