@@ -95,6 +95,7 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, tasks)
 }
 
+
 // GetByID : To get tasks by id
 // @Summary Get task by id
 // @Description Retrive a task from the databse by accepting an id
