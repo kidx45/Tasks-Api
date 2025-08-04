@@ -65,10 +65,15 @@ func Handler(service inbound.Connect) {
 	defer stop()
 	<-shutdown.Done()
 	fmt.Println("Shutting Down...")
-	if err := server.Shutdown(context.Background()); err != nil {
-		fmt.Println("Shutdown with Error")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 20  * time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		fmt.Printf("Shutdown with Error %v", err)
+	} else {
+		fmt.Println("Shutdown Successfully")
 	}
-	fmt.Println("Shutdown Successfully")
 }
 
 // CreateTask : Function to create a task
@@ -84,7 +89,7 @@ func Handler(service inbound.Connect) {
 // @Router /tasks [post]
 func (h HTTPHandler) CreateTask(c *gin.Context) {
 	rqt := c.Request.Context()
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	var task domain.Task
 	var input domain.UserInput
 	if err := c.BindJSON(&input); err != nil {
@@ -112,7 +117,7 @@ func (h HTTPHandler) CreateTask(c *gin.Context) {
 // @Router /tasks [get]
 func (h HTTPHandler) GetAll(c *gin.Context) {
 	rqt := c.Request.Context()
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	tasks, err := h.Service.GetAll(rqt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
@@ -133,7 +138,7 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 // @Router /tasks/{id} [get]
 func (h HTTPHandler) GetByID(c *gin.Context) {
 	rqt := c.Request.Context()
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	id := c.Param("id")
 	task, err := h.Service.GetByID(rqt, id)
 	if err != nil {
@@ -156,7 +161,7 @@ func (h HTTPHandler) GetByID(c *gin.Context) {
 // @Router /tasks [put]
 func (h HTTPHandler) UpdateTask(c *gin.Context) {
 	rqt := c.Request.Context()
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -182,7 +187,7 @@ func (h HTTPHandler) UpdateTask(c *gin.Context) {
 // @Router /tasks/{id} [delete]
 func (h HTTPHandler) Delete(c *gin.Context) {
 	rqt := c.Request.Context()
-	time.Sleep(5 * time.Second)
+	time.Sleep(10 * time.Second)
 	id := c.Param("id")
 	err := h.Service.Delete(rqt, id)
 	if err != nil {
