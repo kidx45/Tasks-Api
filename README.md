@@ -108,7 +108,7 @@ If using Postgres, enter the number "2" in the terminal and press ENTER. If the 
 
 ### 3. Swagger UI
 Next, head over to the browser of your choice and visit the following website:<br>
-#### URL
+#### URL 
 ```url
 http://localhost:8080/swagger/index.html
 ```
