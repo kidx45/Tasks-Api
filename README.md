@@ -92,15 +92,18 @@ If using Postgres, enter the number "2" in the terminal and press ENTER. If the 
  - using env:   export GIN_MODE=release
  - using code:  gin.SetMode(gin.ReleaseMode)
 
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:   export GIN_MODE=release
+ - using code:  gin.SetMode(gin.ReleaseMode)
+
 [GIN-debug] GET    /swagger/*any             --> github.com/swaggo/gin-swagger.CustomWrapHandler.func1 (3 handlers)
 [GIN-debug] POST   /tasks                    --> task-api/internal/adapter/inbound/http.HTTPHandler.CreateTask-fm (3 handlers)
 [GIN-debug] GET    /tasks                    --> task-api/internal/adapter/inbound/http.HTTPHandler.GetAll-fm (3 handlers)
 [GIN-debug] GET    /tasks/:id                --> task-api/internal/adapter/inbound/http.HTTPHandler.GetByID-fm (3 handlers)
 [GIN-debug] PUT    /tasks                    --> task-api/internal/adapter/inbound/http.HTTPHandler.UpdateTask-fm (3 handlers)
 [GIN-debug] DELETE /tasks/:id                --> task-api/internal/adapter/inbound/http.HTTPHandler.Delete-fm (3 handlers)
-[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
-Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
-[GIN-debug] Listening and serving HTTP on localhost:8080
 ```
 
 ### 3. Swagger UI

@@ -19,10 +19,15 @@
 package httpy
 
 import (
+	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"os/signal"
+	"syscall"
 	"task-api/internal/domain"
 	"task-api/internal/port/inbound"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -44,10 +49,26 @@ func Handler(service inbound.Connect) {
 	router.GET("/tasks/:id", handler.GetByID)
 	router.PUT("/tasks", handler.UpdateTask)
 	router.DELETE("/tasks/:id", handler.Delete)
-	if err := router.Run("localhost:8080"); err != nil {
-		log.Fatalf("Server can't start: %v", err)
+
+	server := http.Server{
+		Addr: "localhost:8080",
+		Handler: router,
 	}
 
+	go func () {
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("Server can't start: %v", err)
+	}
+	}()
+	
+	shutdown, stop := signal.NotifyContext(context.Background(),syscall.SIGTERM,syscall.SIGINT)
+	defer stop()
+	<-shutdown.Done()
+	fmt.Println("Shutting Down...")
+	if err := server.Shutdown(context.Background()); err != nil {
+		fmt.Println("Shutdown with Error")
+	}
+	fmt.Println("Shutdown Successfully")
 }
 
 // CreateTask : Function to create a task
@@ -63,6 +84,7 @@ func Handler(service inbound.Connect) {
 // @Router /tasks [post]
 func (h HTTPHandler) CreateTask(c *gin.Context) {
 	rqt := c.Request.Context()
+	time.Sleep(5 * time.Second)
 	var task domain.Task
 	var input domain.UserInput
 	if err := c.BindJSON(&input); err != nil {
@@ -90,6 +112,7 @@ func (h HTTPHandler) CreateTask(c *gin.Context) {
 // @Router /tasks [get]
 func (h HTTPHandler) GetAll(c *gin.Context) {
 	rqt := c.Request.Context()
+	time.Sleep(5 * time.Second)
 	tasks, err := h.Service.GetAll(rqt)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch tasks"})
@@ -110,6 +133,7 @@ func (h HTTPHandler) GetAll(c *gin.Context) {
 // @Router /tasks/{id} [get]
 func (h HTTPHandler) GetByID(c *gin.Context) {
 	rqt := c.Request.Context()
+	time.Sleep(5 * time.Second)
 	id := c.Param("id")
 	task, err := h.Service.GetByID(rqt, id)
 	if err != nil {
@@ -132,6 +156,7 @@ func (h HTTPHandler) GetByID(c *gin.Context) {
 // @Router /tasks [put]
 func (h HTTPHandler) UpdateTask(c *gin.Context) {
 	rqt := c.Request.Context()
+	time.Sleep(5 * time.Second)
 	var task domain.Task
 	if err := c.BindJSON(&task); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -157,6 +182,7 @@ func (h HTTPHandler) UpdateTask(c *gin.Context) {
 // @Router /tasks/{id} [delete]
 func (h HTTPHandler) Delete(c *gin.Context) {
 	rqt := c.Request.Context()
+	time.Sleep(5 * time.Second)
 	id := c.Param("id")
 	err := h.Service.Delete(rqt, id)
 	if err != nil {
