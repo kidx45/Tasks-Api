@@ -71,7 +71,7 @@ func (h HTTPHandler) CreateTask(c *gin.Context) {
 	}
 	id, err := h.Service.CreateTask(rqt, input)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Create_task task"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to Create task"})
 		return
 	}
 	task.ID = id
