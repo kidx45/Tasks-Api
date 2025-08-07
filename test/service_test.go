@@ -42,7 +42,7 @@ func TestServiceCreateTask(t *testing.T) {
 	task := domain.UserInput{
 		Title: "test1", Description: "testing123",
 	}
-	mock.On("CreateTask", context.Background(),task).Return("1", nil)
+	mock.On("CreateTask", context.Background(), task).Return("1", nil)
 
 	id, err := service.CreateTask(context.Background(), task)
 	assert.NoError(t, err)
@@ -74,7 +74,7 @@ func TestServiceGetByID(t *testing.T) {
 		{ID: "2", Title: "test2", Description: "testing456"},
 	}
 
-	mock.On("GetByID",context.Background(), "1").Return(task[0], nil)
+	mock.On("GetByID", context.Background(), "1").Return(task[0], nil)
 	test, err := service.GetByID(context.Background(), "1")
 
 	assert.Equal(t, test, task[0])
@@ -88,7 +88,7 @@ func TestServiceUpdateTask(t *testing.T) {
 	task := domain.Task{
 		ID: "1", Title: "test1", Description: "testing123",
 	}
-	mock.On("UpdateTask",context.Background(), task).Return(nil)
+	mock.On("UpdateTask", context.Background(), task).Return(nil)
 	err := service.UpdateTask(context.Background(), task)
 
 	assert.NoError(t, err)
@@ -99,7 +99,7 @@ func TestServiceDelete(t *testing.T) {
 	service := service.NewConnect(mock)
 
 	ID := "1"
-	mock.On("Delete",context.Background(), ID).Return(nil)
+	mock.On("Delete", context.Background(), ID).Return(nil)
 	err := service.Delete(context.Background(), ID)
 
 	assert.NoError(t, err)

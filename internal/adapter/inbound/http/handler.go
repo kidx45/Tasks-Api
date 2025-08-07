@@ -51,22 +51,22 @@ func Handler(service inbound.Connect) {
 	router.DELETE("/tasks/:id", handler.Delete)
 
 	server := http.Server{
-		Addr: "localhost:8080",
+		Addr:    "localhost:8080",
 		Handler: router,
 	}
 
-	go func () {
+	go func() {
 		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		log.Fatalf("Server can't start: %v", err)
-	}
+			log.Fatalf("Server can't start: %v", err)
+		}
 	}()
-	
-	shutdown, stop := signal.NotifyContext(context.Background(),syscall.SIGTERM,syscall.SIGINT)
+
+	shutdown, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
 	defer stop()
 	<-shutdown.Done()
 	fmt.Println("Shutting Down...")
 
-	ctx, cancel := context.WithTimeout(context.Background(), 20  * time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	if err := server.Shutdown(ctx); err != nil {
